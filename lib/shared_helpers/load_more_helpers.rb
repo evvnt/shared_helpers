@@ -16,8 +16,9 @@ module SharedHelpers
 
       def call(calling_scope)
         content_id = SecureRandom.hex
-        calling_scope.instance_exec(@meta, @params, content_id) do |meta, params, id|
-          unless meta[:source].empty? || 1
+        is_last_page = last_page?(@meta[:source])
+        calling_scope.instance_exec(@meta, @params, content_id, is_last_page) do |meta, params, id, is_last_page|
+          unless meta[:source].empty? || is_last_page
             content id: id do
               button meta[:text] do
                 event :click do
@@ -32,6 +33,14 @@ module SharedHelpers
       private
 
       include ::Commands::ValidateParams
+
+      def last_page?(source)
+        if source.respond_to?(:last_page?)
+          source.last_page?
+        else
+          source.try(:current_page).to_i >= source.total_pages
+        end
+      end
 
       def default_params
         reject_nil_params(
