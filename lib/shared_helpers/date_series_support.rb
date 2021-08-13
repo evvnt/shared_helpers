@@ -2,12 +2,12 @@ module SharedHelpers
   module DateSeriesSupport
 
     def run_validation_rules
-      raise Errors::ParameterValidation, "Please select one or more custom event dates." if custom_date_series? && custom_dates.blank?
-      raise Errors::ParameterValidation, "Please select one or more days of the week." if weekly_date_series? && days_of_week.blank?
+      raise Commands::Errors::ParameterValidation, "Please select one or more custom event dates." if custom_date_series? && custom_dates.blank?
+      raise Commands::Errors::ParameterValidation, "Please select one or more days of the week." if weekly_date_series? && days_of_week.blank?
       if (weekly_date_series? || daily_date_series?) && (params[:from_date].blank? || params[:to_date].blank?)
-        raise Errors::ParameterValidation, "Please select start and end dates."
+        raise Commands::Errors::ParameterValidation, "Please select start and end dates."
       end
-      raise Errors::ParameterValidation, "Invalid Time Range: End time must occur after start time" unless valid_time_range?
+      raise Commands::Errors::ParameterValidation, "Invalid Time Range: End time must occur after start time" unless valid_time_range?
     end
 
     def valid_time_range?
